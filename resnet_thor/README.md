@@ -1,5 +1,8 @@
-# ms-resnet50-mushroom
-This is a tutorial for training MindSpore ResNet-50 model to classifying mushrooms.
+# MindSpore ResNet-50 Thor Tutorial with Ascend ModelArts Service
+
+This is a tutorial for training MindSpore ResNet-50 Thor model to classifying mushrooms.
+
+> **NOTICE:** The codebase of this tutorial is developed based on `v0.5` MindSpore [ModelZoo](https://gitee.com/mindspore/mindspore/tree/r0.5/model_zoo/resnet_thor).
 
 ## Disclaimers
 
@@ -9,4 +12,4 @@ To dataset owners: we will remove or update all public content upon request if y
 
 ## License
 
-[Apache License 2.0](LICENSE)
+[Apache License 2.0](../LICENSE)
