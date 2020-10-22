@@ -28,7 +28,7 @@ cd ms-resnet50-mushroom/
 
 ```
 cd mushroom-dataset/ && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip
-unzip mushrooms.zip
+unzip mushrooms.zip && rm mushrooms.zip
 cd ../resnet_gpu/
 ```
 
@@ -40,6 +40,18 @@ cd ./scripts/ && bash run_standalone_train_gpu.sh resnet50 imagenet2012 ../../mu
 ps –ef |grep python
 # Track the log message
 tail -f ./train/log
+```
+```
+epoch: 90 step: 201, loss is 1.5889285
+epoch: 90 step: 202, loss is 1.377257
+epoch: 90 step: 203, loss is 1.6227098
+epoch: 90 step: 204, loss is 1.5957711
+epoch: 90 step: 205, loss is 1.4774182
+epoch: 90 step: 206, loss is 1.3818822
+epoch: 90 step: 207, loss is 1.2700025
+epoch: 90 step: 208, loss is 1.5183961
+epoch: 90 step: 209, loss is 1.5881176
+Epoch time: 11870.333, per step time: 56.796
 ```
 
 ### Download the pre-trained ResNet-50 model
@@ -53,11 +65,31 @@ cd ./ckpt_files && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.co
 ```
 python eval.py --net resnet50 --dataset imagenet2012 --checkpoint_path ./ckpt_files/resnet-50_209.ckpt --dataset_path ../mushroom-dataset/train --device_target GPU
 ```
+```
+result: {'top_5_accuracy': 0.9594796650717703, 'top_1_accuracy': 0.6402511961722488} ckpt= ./ckpt_files/resnet-50_209.ckpt
+```
 
 ### Model prediction
 
 ```
 python predict.py --checkpoint_path ./ckpt_files/resnet-50_209.ckpt --dataset_path ../mushroom-dataset/test --device_target GPU
+```
+```
+---The 1 prediction---
+Expected Amanita毒蝇伞,伞菌目,鹅膏菌科,鹅膏菌属,主要分布于我国黑龙江、吉林、四川、西藏、云南等地,有毒,
+	 got Amanita毒蝇伞,伞菌目,鹅膏菌科,鹅膏菌属,主要分布于我国黑龙江、吉林、四川、西藏、云南等地,有毒
+
+---The 2 prediction---
+Expected Agaricus双孢蘑菇,伞菌目,蘑菇科,蘑菇属,广泛分布于北半球温带,无毒,
+	 got Agaricus双孢蘑菇,伞菌目,蘑菇科,蘑菇属,广泛分布于北半球温带,无毒
+
+---The 3 prediction---
+Expected Boletus丽柄牛肝菌,伞菌目,牛肝菌科,牛肝菌属,分布于云南、陕西、甘肃、西藏等地,有毒,
+	 got Boletus丽柄牛肝菌,伞菌目,牛肝菌科,牛肝菌属,分布于云南、陕西、甘肃、西藏等地,有毒
+
+---The 4 prediction---
+Expected Cortinarius掷丝膜菌,伞菌目,丝膜菌科,丝膜菌属,分布于湖南等地(夏秋季在山毛等阔叶林地上生长),
+	 got Cortinarius掷丝膜菌,伞菌目,丝膜菌科,丝膜菌属,分布于湖南等地(夏秋季在山毛等阔叶林地上生长)
 ```
 
 ## Disclaimers
