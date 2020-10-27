@@ -13,6 +13,12 @@ This is a tutorial for training MindSpore ResNet-50 model to classifying mushroo
     sudo apt install -y unzip
     ```
 
+* Python package
+
+    ```
+    pip install opencv-python
+    ```
+
 * MindSpore (**v1.0**)
 
     For MindSpore installation, please refer to [MindSpore install page](https://www.mindspore.cn/install).
@@ -24,7 +30,7 @@ git clone https://github.com/leonwanghui/ms-resnet50-mushroom.git
 cd ms-resnet50-mushroom/
 ```
 
-### Download mushroom dataset
+# Download mushroom dataset
 
 ```
 cd mushroom-dataset/ && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip
@@ -32,14 +38,12 @@ unzip mushrooms.zip && rm mushrooms.zip
 cd ../resnet_gpu/
 ```
 
+Or you can directly open [https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip](https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip) to download the dataset from the browser.
+
 ### Model training
 
 ```
-cd ./scripts/ && bash run_standalone_train_gpu.sh resnet50 imagenet2012 ../../mushroom-dataset/train
-# Check if the process running
-ps –ef |grep python
-# Track the log message
-tail -f ./train/log
+python train.py --dataset_path ../mushroom-dataset/train
 ```
 ```
 epoch: 90 step: 201, loss is 1.5889285
@@ -57,46 +61,29 @@ Epoch time: 11870.333, per step time: 56.796
 ### Download the pre-trained ResNet-50 model
 
 ```
-cd ./ckpt_files && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-50_209.ckpt
+cd ./ckpt_files && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-90_209.ckpt
 ```
+
+Or you can directly open [https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-90_209.ckpt](https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-90_209.ckpt) to download the pre-trained model from the browser.
 
 ### Model evaluation
 
 ```
-python eval.py --net resnet50 --dataset imagenet2012 --checkpoint_path ./ckpt_files/resnet-50_209.ckpt --dataset_path ../mushroom-dataset/train --device_target GPU
+python eval.py --checkpoint_path ./ckpt_files/resnet-90_209.ckpt --dataset_path ../mushroom-dataset/train
 ```
 ```
-result: {'top_5_accuracy': 0.9594796650717703, 'top_1_accuracy': 0.6402511961722488} ckpt= ./ckpt_files/resnet-50_209.ckpt
+result: {'top_1_accuracy': 0.7034988038277512, 'top_5_accuracy': 0.9732356459330144} ckpt= ./ckpt_files/resnet-90_209.ckpt
 ```
 
 ### Model prediction
 
 ```
-python predict.py --checkpoint_path ./ckpt_files/resnet-50_209.ckpt --dataset_path ../mushroom-dataset/test --device_target GPU
+python predict.py --checkpoint_path ./ckpt_files/resnet-90_209.ckpt --image_path ./tum.jpg
 ```
 ```
----The 1 prediction---
-Expected Amanita毒蝇伞,伞菌目,鹅膏菌科,鹅膏菌属,主要分布于我国黑龙江、吉林、四川、西藏、云南等地,有毒,
-	 got Amanita毒蝇伞,伞菌目,鹅膏菌科,鹅膏菌属,主要分布于我国黑龙江、吉林、四川、西藏、云南等地,有毒
-
----The 2 prediction---
-Expected Agaricus双孢蘑菇,伞菌目,蘑菇科,蘑菇属,广泛分布于北半球温带,无毒,
-	 got Agaricus双孢蘑菇,伞菌目,蘑菇科,蘑菇属,广泛分布于北半球温带,无毒
-
----The 3 prediction---
-Expected Boletus丽柄牛肝菌,伞菌目,牛肝菌科,牛肝菌属,分布于云南、陕西、甘肃、西藏等地,有毒,
-	 got Boletus丽柄牛肝菌,伞菌目,牛肝菌科,牛肝菌属,分布于云南、陕西、甘肃、西藏等地,有毒
-
----The 4 prediction---
-Expected Cortinarius掷丝膜菌,伞菌目,丝膜菌科,丝膜菌属,分布于湖南等地(夏秋季在山毛等阔叶林地上生长),
-	 got Cortinarius掷丝膜菌,伞菌目,丝膜菌科,丝膜菌属,分布于湖南等地(夏秋季在山毛等阔叶林地上生长)
+预测的蘑菇标签为:
+	Lactarius松乳菇,红菇目,红菇科,乳菇属,广泛分布于亚热带松林地,无毒
 ```
-
-## Disclaimers
-
-MindSpore ModelZoo only provides scripts that downloads and preprocesses public datasets. We do not own these datasets and are not responsible for their quality or maintenance. Please make sure you have permission to use the dataset under the dataset’s license.
-
-To dataset owners: we will remove or update all public content upon request if you don’t want your dataset included on MindSpore ModelZoo, or wish to update it in any way. Please contact us through a [Gitee](https://gitee.com/mindspore/mindspore/issues)/[GitHub](https://github.com/mindspore-ai/mindspore/issues) issue. Your understanding and contribution to this community is greatly appreciated.
 
 ## License
 

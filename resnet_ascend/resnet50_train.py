@@ -163,7 +163,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='ResNet50 train.')
     parser.add_argument('--data_url', required=True, default=None, help='Location of data.')
     parser.add_argument('--train_url', required=True, default=None, help='Location of training outputs.')
-    parser.add_argument('--epoch_size', type=int, default=50, help='Train epoch size.')
+    parser.add_argument('--epoch_size', type=int, default=90, help='Train epoch size.')
 
     args_opt, unknown = parser.parse_known_args()
 

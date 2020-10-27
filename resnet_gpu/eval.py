@@ -23,12 +23,13 @@ from mindspore.train.serialization import load_checkpoint, load_param_into_net
 from src.CrossEntropySmooth import CrossEntropySmooth
 
 parser = argparse.ArgumentParser(description='Image classification')
-parser.add_argument('--net', type=str, default=None, help='Resnet Model, either resnet50 or resnet101')
-parser.add_argument('--dataset', type=str, default=None, help='Dataset, either cifar10 or imagenet2012')
-
-parser.add_argument('--checkpoint_path', type=str, default=None, help='Checkpoint file path')
-parser.add_argument('--dataset_path', type=str, default=None, help='Dataset path')
-parser.add_argument('--device_target', type=str, default='Ascend', help='Device target')
+parser.add_argument('--net', type=str, default='resnet50',
+                    help='Resnet Model, either resnet50 or resnet101. Default: resnet50')
+parser.add_argument('--dataset', type=str, default='imagenet2012',
+                    help='Dataset, either cifar10 or imagenet2012. Default: imagenet2012')
+parser.add_argument('--checkpoint_path', required=True, type=str, default=None, help='Checkpoint file path')
+parser.add_argument('--dataset_path', required=True, type=str, default=None, help='Dataset path')
+parser.add_argument('--device_target', type=str, default='GPU', help='Device target. Default: GPU')
 args_opt = parser.parse_args()
 
 set_seed(1)

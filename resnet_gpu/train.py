@@ -16,8 +16,10 @@
 import os
 import argparse
 import ast
-from mindspore import context
-from mindspore import Tensor
+
+import mindspore.nn as nn
+import mindspore.common.initializer as weight_init
+from mindspore import context, Tensor
 from mindspore.nn.optim.momentum import Momentum
 from mindspore.train.model import Model
 from mindspore.context import ParallelMode
@@ -27,19 +29,20 @@ from mindspore.train.loss_scale_manager import FixedLossScaleManager
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 from mindspore.communication.management import init, get_rank, get_group_size
 from mindspore.common import set_seed
-import mindspore.nn as nn
-import mindspore.common.initializer as weight_init
+
 from src.lr_generator import get_lr, warmup_cosine_annealing_lr
 from src.CrossEntropySmooth import CrossEntropySmooth
 
 parser = argparse.ArgumentParser(description='Image classification')
-parser.add_argument('--net', type=str, default=None, help='Resnet Model, either resnet50 or resnet101')
-parser.add_argument('--dataset', type=str, default=None, help='Dataset, either cifar10 or imagenet2012')
+parser.add_argument('--net', type=str, default='resnet50',
+                    help='Resnet Model, either resnet50 or resnet101. Default: resnet50')
+parser.add_argument('--dataset', type=str, default='imagenet2012',
+                    help='Dataset, either cifar10 or imagenet2012. Default: imagenet2012')
 parser.add_argument('--run_distribute', type=ast.literal_eval, default=False, help='Run distribute')
 parser.add_argument('--device_num', type=int, default=1, help='Device num.')
 
-parser.add_argument('--dataset_path', type=str, default=None, help='Dataset path')
-parser.add_argument('--device_target', type=str, default='Ascend', help='Device target')
+parser.add_argument('--dataset_path', required=True, type=str, default=None, help='Dataset path')
+parser.add_argument('--device_target', type=str, default='GPU', help='Device target')
 parser.add_argument('--pre_trained', type=str, default=None, help='Pretrained checkpoint path')
 parser.add_argument('--parameter_server', type=ast.literal_eval, default=False, help='Run parameter server train')
 args_opt = parser.parse_args()
@@ -170,8 +173,9 @@ if __name__ == '__main__':
             model = Model(net, loss_fn=loss, optimizer=opt, loss_scale_manager=loss_scale, metrics={'acc'},
                           amp_level="O2", keep_batchnorm_fp32=True)
         else:
-            ## fp32 training
-            opt = Momentum(filter(lambda x: x.requires_grad, net.get_parameters()), lr, config.momentum, config.weight_decay)
+            # fp32 training
+            opt = Momentum(filter(lambda x: x.requires_grad, net.get_parameters()),
+                           lr, config.momentum, config.weight_decay)
             model = Model(net, loss_fn=loss, optimizer=opt, metrics={'acc'})
 
     # define callbacks

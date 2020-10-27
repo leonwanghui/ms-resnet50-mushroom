@@ -13,24 +13,30 @@ git clone https://github.com/leonwanghui/ms-resnet50-mushroom.git
 cd ms-resnet50-mushroom/
 ```
 
-### Download mushroom dataset
+### Data preparation
 
-```
-cd mushroom-dataset/ && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip
-unzip mushrooms.zip && rm mushrooms.zip
-```
+* Download mushroom dataset
 
-### Download the pre-trained ResNet-50 model
+    ```
+    cd mushroom-dataset/ && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip
+    unzip mushrooms.zip && rm mushrooms.zip
+    ```
 
-```
-cd ../resnet_ascend/ckpt_files && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-50_209.ckpt
-```
+    Or you can directly open [https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip](https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/mushrooms/mushrooms.zip) to download the dataset from the browser.
 
-### Upload the dataset and source code to OBS service
+* Download the pre-trained ResNet-50 model
 
-Please upload the mushroom dataset, pre-trained model and source code to [OBS public cloud service](https://www.huaweicloud.com/product/obs.html) with the format requirement below:
+    ```
+    cd ../resnet_ascend/ckpt_files && wget https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-90_209.ckpt
+    ```
 
-<img src="../docs/data_upload_obs.jpg" alt="OBS Data Upload" width="600"/>
+    Or you can directly open [https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-90_209.ckpt](https://ascend-tutorials.obs.cn-north-4.myhuaweicloud.com/resnet-50/ckpt_files/resnet-90_209.ckpt) to download the pre-trained model from the browser.
+
+* Upload the dataset and source code to OBS service
+
+    Please upload the mushroom dataset, pre-trained model and source code to [OBS public cloud service](https://www.huaweicloud.com/product/obs.html) with the format requirement below:
+
+    <img src="../docs/data_upload_obs.jpg" alt="OBS Data Upload" width="600"/>
 
 ### Model training
 

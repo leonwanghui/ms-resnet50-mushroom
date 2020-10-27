@@ -13,8 +13,10 @@
 # limitations under the License.
 # ============================================================================
 """ResNet50 model predict with MindSpore"""
+import os
 import argparse
 import random
+import cv2
 import numpy as np
 import moxing as mox
 
@@ -22,7 +24,6 @@ import mindspore
 from mindspore import context, Tensor
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
-from dataset import create_dataset
 from config import cfg
 from resnet import resnet50
 
@@ -39,6 +40,37 @@ label_list = ["Agaricus双孢蘑菇,伞菌目,蘑菇科,蘑菇属,广泛分布�
               "Russula褪色红菇,伞菌目,红菇科,红菇属,分布于河北、吉林、四川、江苏、西藏等地,无毒",
               "Suillus乳牛肝菌,牛肝菌目,乳牛肝菌科,乳牛肝菌属,分布于吉林、辽宁、山西、安徽、江西、浙江、湖南、四川、贵州等地,无毒",
               ]
+
+
+def _crop_center(img, cropx, cropy):
+    _, y, x = img.shape
+    startx = x // 2 - (cropx // 2)
+    starty = y // 2 - (cropy // 2)
+    return img[:, starty:starty + cropy, startx:startx + cropx]
+
+
+def _normalize(img, mean, std):
+    # This method is borrowed from:
+    #   https://github.com/open-mmlab/mmcv/blob/master/mmcv/image/photometric.py
+    assert img.dtype != np.uint8
+    mean = np.float64(mean.reshape(1, -1))
+    stdinv = 1 / np.float64(std.reshape(1, -1))
+    cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    cv2.subtract(img, mean)
+    cv2.multiply(img, stdinv)
+    return img
+
+
+def data_preprocess(img_path):
+    img = cv2.imread(img_path, 1)
+    img = cv2.resize(img, (256, 256))
+    mean = [0.485 * 255, 0.456 * 255, 0.406 * 255]
+    std = [0.229 * 255, 0.224 * 255, 0.225 * 255]
+    img = _normalize(img.astype(np.float32), np.asarray(mean), np.asarray(std))
+    img = img.transpose(2, 0, 1)
+    img = _crop_center(img, 224, 224)
+
+    return img
 
 
 def resnet50_predict(args_opt):
@@ -62,21 +94,15 @@ def resnet50_predict(args_opt):
     load_param_into_net(net, param_dict)
     net.set_train(False)
 
-    # predict model
-    epoch_num = 1
-    dataset = create_dataset(dataset_path=local_data_path, do_train=False, batch_size=1)
-    for data in dataset.create_dict_iterator():
-        images = data['image']
-        labels = data['label']
-
-        res = net(Tensor(images, mindspore.float32)).asnumpy()
+    # preprocess the image
+    images = os.listdir(local_data_path)
+    for image in images:
+        img = data_preprocess(os.path.join(local_data_path, image))
+        # predict model
+        res = net(Tensor(img.reshape((1, 3, 224, 224)), mindspore.float32)).asnumpy()
 
         predict_label = label_list[res[0].argmax()]
-        real_label = label_list[labels[0]]
-
-        print("---The %d prediction---" % epoch_num)
-        print("Expected "+real_label+",\n\t got "+predict_label+"\n")
-        epoch_num += 1
+        print("预测的蘑菇标签为:\n\t"+predict_label+"\n")
 
 
 if __name__ == '__main__':
@@ -84,7 +110,6 @@ if __name__ == '__main__':
     parser.add_argument('--data_url', required=True, default=None, help='Location of data.')
     parser.add_argument('--train_url', required=True, default=None, help='Location of training outputs.')
     parser.add_argument('--checkpoint_path', required=True, type=str, default=None, help='Checkpoint file path')
-
     args_opt, unknown = parser.parse_known_args()
 
     resnet50_predict(args_opt)
